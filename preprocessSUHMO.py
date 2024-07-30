@@ -71,13 +71,12 @@ def interpolate (x, y):
     y = np.random.rand(100) * 10
     z = np.sin(x) * np.cos(y)
 
-    # Define the grid for interpolation
+    # Grid size
     grid_x, grid_y = np.mgrid[0:10:100j, 0:10:100j]
 
     # Griddata
     grid_z = griddata((x, y), z, (grid_x, grid_y), method='cubic')
 
-    # Plot original points and interpolated grid
     plt.figure()
     plt.scatter(x, y, c=z, s=100, edgecolor='k', label='Original Points')
     plt.imshow(grid_z.T, extent=(0, 10, 0, 10), origin='lower', alpha=0.5)
