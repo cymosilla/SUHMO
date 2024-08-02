@@ -1,6 +1,6 @@
-import scipy
-from scipy.io import netcdf
 from pathlib import Path
+import scipy
+from scipy.ndimage import zoom
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -8,7 +8,10 @@ import netCDF4 as nc
 import h5py
 
 '''
-Acknowledgements to NOAA/NESDIS/STAR Aerosols and Atmospheric Composition Science Team
+Acknowledgements:
+- NOAA/NESDIS/STAR Aerosols and Atmospheric Composition Science Team
+- Dr. Krti Tallam
+
 
 All in the same .py file with different functions
 0. Read
@@ -17,9 +20,9 @@ All in the same .py file with different functions
 2.5 (OPTIONAL) Coarsen - final grid size based on user input
 3. Dump cut file in NetCDF instead of creating new NetCDF file 
 4. Conversion of .nc dumped file to HDF
-5. Addition of boundary conditions
+5. Read the HDF file inside SUHMO (not preprocess, extra step)
 
-Order of development: 0, 1 (or 2), 3, 4, 2.5
+Order of development: 0, 2, 1, 3, 4, 2.5
 
 Input: .nc file (for now)
 Output: HDF5 file
@@ -39,19 +42,26 @@ To test step 1:
     xv = ncout.createVariable('x','f8',('x'))
     yv = ncout.createVariable('y','f8',('y'))
 '''
-
+###########################################################
 # Step 0: Read data
 def print_data_bedMachine(file_path):
-    file_id = Dataset(file_path)
-    print(file_id.variables['dataid'])
-    print(file_id.variables['bed'])
-    print(file_id.variables['thickness'])
-    print(file_id.variables['errbed'])
-    print(file_id.variables['surface'])
-    # [:,:] obtains data from a 2d format
-    bed = file_id.variables['bed'][:,:]
-    id = file_id.variables['dataid'][:,:]
-    thk = file_id.variables['thickness'][:,:]
+    file_id = nc.Dataset(file_path, mode='r') # Read-only mode
+    # print(file_id.variables['dataid'])
+    # print(file_id.variables['bed'])
+    # print(file_id.variables['thickness'])
+    # print(file_id.variables['errbed'])
+    # print(file_id.variables['surface'])
+    # # [:,:] obtains data from a 2d format
+    # bed = file_id.variables['bed'][:,:]
+    # id = file_id.variables['dataid'][:,:]
+    # thk = file_id.variables['thickness'][:,:]
+    return file_id
+
+# Prints out all values from one variable desired by user from input file
+def print_specific_bedMachine(file_path, var):
+    file_id = nc.Dataset(file_path, mode='r')
+    varWant = print(file_id.variables[var])
+    return varWant
 
 ###########################################################
 # Step 1: Subregion (Cutting file)
@@ -131,16 +141,16 @@ def coarsenc(name, fine_name):
         vv = coarse_nc.createVariable(v  ,'f8',('y','x'))
         vv[:,:] = coarsen_2D(fine_nc.variables[v][:,:])
 
+    # Dr. Tallam's ex
+def coarsen_data(data, factor):
+    return zoom(data, 1.0 / factor)
+    # Example: coarsening by a factor of 2
 
 ###########################################################
+# Step 3: Write .nc file (still need?)
+    
+###########################################################
 # Step 4: Converison to HDF
-def conversionToHDF():
-    # if ncdump -k == netCDF-4 classic model OR ___
-    #   print("In HDF5")
-    # else 
-    #   print("Starting converison")
-
-    return 0
 
 def netCDFtoHDF(netcdf_file, hdf5_file):
     # Opens nc file & creates new hdf5 file
@@ -164,8 +174,7 @@ def netCDFtoHDF(netcdf_file, hdf5_file):
 
 
 ###########################################################
-# Step 5: Addition of Realistic BCs
-# Geothermal flux, ice thickness, bed elevation
+# Step 5: Read HDF file into SUHMO
 
 
 ###########################################################
