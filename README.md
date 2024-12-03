@@ -40,11 +40,14 @@ BedMachineGreenland-v5.nc, which can be downloaded via NASA MEaSUREs.
 Global Heat Flow Database, which can be downloaded via IHFC's website as a .zip file using the 2024 version. 
 
 ### What to run
+```
 cd SUHMO-Preprocessing-Tools
 python preprocess
+```
 It will then ask you to input bounding box coordinates, as the parameters are such below.
-
-preprocess(x1, y1, x2, y2) 
+```py
+preprocess(x1, y1, x2, y2)
+```
 IMPORTANT: INPUT x, y values as floats or integers. x1, y1 are the lower-left coordinates & x2, y2 as the upper-right coordinates, forming a rectangle subregion. 
 
 BedMachineGreenland-v5.nc's grid size is from x = 10,218 & y = 18,346
