@@ -6,11 +6,15 @@ The objective of these tools are to convert external field data to a format SUHM
 
 The three parameters that are being evaluated by these tools are bedrock elevation, ice thickness, & geothermal flux. 
 
-Bedrock elevation & ice thickness data are derived from BedMachine. Geothermal Flux is from ___.
+Bedrock elevation & ice thickness data are derived from NASA MEaSUREs BedMachine. Geothermal flux is from the International Heat Flow Commission (IHFC) 2024.
 
-NASA BedMachine stores Greenland data as a NetCDF (.nc) file. Both parameters are subregioned & interpolated into the same file.
+NASA BedMachine stores Greenland data as a NetCDF (.nc) file. Both parameters are subregioned & interpolated into the same file as BedMachineGreenland-v5.nc.
 
-Geothermal flux is for now a separate file. Once I can figure out how to combine it into the final HDF5 file, it should altogether be one file.
+Geothermal flux is stored as a .xslx (Excel spreadsheet) file. It is converted to .nc utilizing the pandas module. 
+
+All three parameters will then be compiled as one .nc file that maps out Greenland's parameters, Greenland_params.nc. This is the file used for the subregion & interpolation.
+
+# TODO: Figure out if we combine all three params as one file or subregion & interpolate them separately, then combine as one HDF file at the end.
 
 ## Documentation
 
@@ -42,7 +46,7 @@ Global Heat Flow Database, which can be downloaded via IHFC's website as a .zip 
 ### What to run
 ```
 cd SUHMO-Preprocessing-Tools
-python preprocess
+python preprocess.py
 ```
 It will then ask you to input bounding box coordinates, as the parameters are such below.
 ```py
@@ -52,16 +56,9 @@ IMPORTANT: INPUT x, y values as floats or integers. x1, y1 are the lower-left co
 
 BedMachineGreenland-v5.nc's grid size is from x = 10,218 & y = 18,346
 
-The preprocess command should automatically be subregioned & interpolated, then output two hdf5 files as 
-
-greenland_bedmachine_bed_ice.hdf
-greenland_geothermal_flux.hdf
-
-Later on, they will be combined as one HDF on the same grid.
+The preprocess command should automatically be subregioned & interpolated, then output one hdf5 file as greenland_FINAL.hdf
 
 Specific coordinates for the Isunnguata Sermia glacier approximation: (-2740906, -375354) and (-2845385, -195722)
-
-TODO: Combine all three params into one HDF5 file.
 
 ## Acknowledgements
 - Mentors: Dan Martin, Anna Felden, Anjali Sandip
